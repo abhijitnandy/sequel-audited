@@ -23,8 +23,12 @@ class AuditLog < Sequel::Model
   #
   # NOTE! this allows overriding the default value on a per audited model
   def audit_user
-    m = Kernel.const_get(item_type)
-    send(m.audited_current_user_method)
+    if ::Sequel::Audited.audited_current_user
+      ::Sequel::Audited.audited_current_user
+    else
+			m = Kernel.const_get(item_type)
+			send(m.audited_current_user_method)
+		end
     rescue NoMethodError
     OpenStruct.new(id: "394d9d14-0c8c-4711-96c1-2c3fc90dd671", username: "system", name: "System Migration")
   end
@@ -81,6 +85,8 @@ module Sequel
           # sets the name of the current User method or revert to default: :current_user
           # specifically for the audited model on a per model basis
           set_user_method(opts)
+          # sets the name of the current User
+          set_user(opts)
 
           only    = opts.fetch(:only, [])
           except  = opts.fetch(:except, [])
@@ -121,6 +127,7 @@ module Sequel
         Plugins.inherited_instance_variables(self,
                                              :@audited_default_ignored_columns => nil,
                                              :@audited_current_user_method     => nil,
+																						 :@audited_current_user            => nil,
                                              :@audited_included_columns        => nil,
                                              :@audited_ignored_columns         => nil)
 
@@ -179,6 +186,11 @@ module Sequel
           else
             @audited_default_ignored_columns = ::Sequel::Audited.audited_default_ignored_columns
           end
+        end
+
+        #
+        def set_user(opts)
+          ::Sequel::Audited.audited_current_user
         end
 
         #

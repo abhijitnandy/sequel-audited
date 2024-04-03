@@ -8,6 +8,10 @@ module Sequel
     
     # set the name of the global method that provides the current user. Default: :current_user
     @audited_current_user_method      = :current_user
+		
+		# enable the name of the global variable that provides the current user
+    @audited_current_user             = nil
+
     # enable swapping of the Audit model
     @audited_model_name               = :AuditLog
     # toggle for enabling / disabling auditing
@@ -21,7 +25,7 @@ module Sequel
     ]
     
     class << self
-      attr_accessor :audited_current_user_method, :audited_model_name,
+      attr_accessor :audited_current_user, :audited_current_user_method, :audited_model_name,
                     :audited_enabled, :audited_default_ignored_columns
     end
     
