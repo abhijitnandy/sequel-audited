@@ -1,5 +1,25 @@
 # Sequel::Audited
 
+## UPDATED README (original README below)
+
+This fork solves a specific issue faced when this gem is used with [Roda](https://roda.jeremyevans.net/).
+
+In Roda, when a request comes in, the user is identified using either a token or request headers.
+
+In this case, the user is attached to this plugin using:
+
+```ruby
+Sequel::Audited.audited_current_user = @user
+```
+
+**NOTE!** The original requirements still apply. The `@user` object needs to be able must respond to `:id` and `:username` attributes.
+
+An extra `attr_accessor` has been added `@audited_current_user`.
+
+This, in turn, is set in the plugin using `set_user(opts)` method, which is returned in the `def audit_user` method in the plugin.
+
+## ORIGINAL README
+
 **sequel-audited** is a [Sequel](http://sequel.jeremyevans.net/) plugin that logs changes made to any 
 audited model, including who created, updated and destroyed the record, and what was changed 
 and when the change was made. 
